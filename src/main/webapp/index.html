@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>我的足迹</title>
+    <!--1.导入bootstrap框架全局统一样式；-->
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <!--2. 导入angularJS的分页的样式；-->
+    <link rel="stylesheet" href="angularjs/pagination.css">
+    <!--3. 导入LayerUI弹窗的样式；-->
+    <link rel="stylesheet" href="layer/layer/theme/default/layer.css">
+    <!--4.导入jquery框架 -->
+    <script src="bootstrap/js/jquery.min.js"></script>
+    <!--5.导入bootstrap的库；-->
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+    <!--6.导入angularJS框架的库；-->
+    <script src="angularjs/angular.min.js"></script>
+    <!--7.导入angularJS框架的分页的类库；-->
+    <script src="angularjs/pagination.js"></script>
+    <!--8.导入LayerUI弹窗的类库 ；-->
+    <script src="layer/layer/layer.js"></script>
+</head>
+<body ng-app="app" ng-controller="cityController" ng-init="searchAllProvince()">
+                <!--ng-init="searchAllProvince()" 页面一加载就要调用的方法；-->
+                <!--citycontroller:-->
+                <!--用于定义anj的模块-->
+
+<div class="container">
+
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h1>我的足迹遍布：</h1>
+        </div>
+        <div class="panel-body">
+            <!--anj的双向绑定：ng-model="" -->
+            <!--anj的初始值给定： ng-init=" searchEntity.pid='0' " -->
+            <!--ng-options="p.pid as p.pname for p in provinceList"      provinceList是自己自定义的容器      -->
+            {{searchEntity}}
+            <form class="form-inline">
+                <input type="text" ng-model="searchEntity.cname" class="form-control" placeholder="请输入关键字。。。"/>
+                <!--ng-init="searchEntity.pid='0'" 初始化值为&#45;&#45;请选择&#45;&#45;-->
+                所属省：<select class="form-control" ng-init="searchEntity.pid='0'" ng-model="searchEntity.pid" ng-options="p.pid as p.province for p in provinceList">
+                <!--加载所有的省；pid是真正的值，pname是显示的值； -->
+            </select>
+                <button class="btn btn-success" ng-click="addCitys()">新增城市</button>
+                <button class="btn btn-primary" ng-click="searchCitys()">综合查询</button>
+            </form>
+            <table class="table table-bordered table-hover table-striped text-center">
+                <tr>
+                    <td>城市id</td>
+                    <td>城市名称</td>
+                    <td>所属省id</td>
+                    <td>操作</td>
+                </tr>
+
+                <!--对list进行遍历-->
+                <tr ng-repeat="c in list">
+                    <td>{{c.cid}}</td>
+                    <td>{{c.cname}}</td>
+                    <td>{{c.pid}}</td>
+                    <td>
+                        <a href="#" ng-click="updateCity(c.cid)" class="btn btn-success">修改</a>
+                        <a href="#" ng-click="deleteCity(c.cid)" class="btn btn-danger">删除</a>
+                    </td>
+                </tr>
+
+            </table>
+        </div>
+        <div class="panel-footer text-right">
+            我的足迹遍布！！！
+        </div>
+    </div>
+</div>
+<script>
+
+    //定义ng的模块app，
+    var app = angular.module("app");
+    //定义控制器
+    app.controller("cityController",function ($scope,$http) {
+
+
+        //默认页面加载的数据；
+        var index;  //加载中的特效。。。
+        $scope.search = function () {
+            //自定义一个查询的方法search(page,pagesize);
+            index = layer.load(1); //正在加载中。。。
+            $http.post("/city/list.action",$scope.searchEntity).success(function (data) {
+                $scope.list = data.list;  //需要遍历的集合；
+                layer.close(index);  //加载关闭。
+            })
+        }
+
+        //查询所有的省！
+        $scope.searchAllProvince = function () {
+            $http.post("/province/list.action").success(function (data) {
+                $scope.provinceList = data;         //需要遍历的集合；
+                //添加一行：查询所有省；
+                $scope.provinceList.push({pid:'0',pname:'--请选择--'})
+            })
+        }
+
+
+
+    })
+</script>
+
+
+</body>
+</html>
