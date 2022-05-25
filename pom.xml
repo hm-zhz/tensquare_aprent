@@ -14,7 +14,7 @@
   <url>http://www.example.com</url>
 
   <properties>
-    <version_spring>4.3.9.RELEASE</version_spring>
+    <version_spring>5.2.22.RELEASE</version_spring>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.7</maven.compiler.source>
     <maven.compiler.target>1.7</maven.compiler.target>
